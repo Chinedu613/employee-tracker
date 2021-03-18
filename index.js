@@ -17,11 +17,14 @@ const startTracker = () => {
         "View All Employees By Department",
         "View All Employees by Managers",
         "Add Employee",
-        "Remove Employee",
-        "Update Employee Role",
-        "Update Employee Manager",
         "Add Department",
         "Add Role",
+        "Remove Employee",
+        "Update Employee",
+        "Update Role",
+        "Update Department",
+        "Update Employee Manager",
+    
         "Exit",
       ],
     })
@@ -42,7 +45,7 @@ const startTracker = () => {
         case "Remove Employee":
           //removeEmployee();
           break;
-        case "Update Employee Role":
+        case "Update Role":
           updateRole();
           break;
         case "Update Employee Manager":
