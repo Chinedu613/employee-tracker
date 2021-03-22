@@ -1,4 +1,3 @@
-
 const mysql = require("mysql");
 const util = require("util");
 //const allEmployees = require('./lib/view_all');
@@ -16,5 +15,5 @@ const connection = mysql.createConnection({
   connection.query = util.promisify(connection.query);
   
 
-
+module.exports = connection.query;
 module.exports = connection;

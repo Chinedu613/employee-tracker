@@ -24,7 +24,7 @@ last_name VARCHAR(30) NOT NULL,
 role_id INT,
 department_id INT,
 FOREIGN KEY (department_id) REFERENCES departments(department_id),
-FOREIGN KEY (role_id) REFERENCES roles(role_id),
+FOREIGN KEY (role_id) REFERENCES roles(role_id) ON UPDATE CASCADE ON DELETE SET NULL,
 PRIMARY KEY (id)
 );
 

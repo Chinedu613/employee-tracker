@@ -1,10 +1,10 @@
 // npm packages
-
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 // modules
 const connection = require("./db.js");
-const { query } = require("./db.js");
+
+
 
 const startTracker = () => {
   inquirer
@@ -16,13 +16,15 @@ const startTracker = () => {
         "View All Employees",
         "View All Employees By Department",
         "View All Employees by Role",
+        "View Budget By Department",
         "Add Employee",
         "Add Department",
         "Add Role",
         "Remove Employee",
-        "Update Role",
+        "Remove Role",
+        "Remove Department",
+        "Update Employee's Role",
         "Update Employee Manager",
-
         "Exit",
       ],
     })
@@ -37,26 +39,35 @@ const startTracker = () => {
         case "View All Employees by Role":
           employeesByRoles();
           break;
+        case "View Budget By Department":
+          viewBudget();
+          break;
         case "Add Employee":
           addEmployee();
           break;
-        case "Remove Employee":
-          removeEmployee();
-          break;
-        case "Update Role":
+          case "Add Department":
+            addDepartment();
+            break;
+          case "Add Role":
+            addRole();
+            break;
+        case "Update Employee's Role":
           updateRole();
           break;
         case "Update Employee Manager":
           //updateManager();
           break;
-        case "Add Department":
-          addDepartment();
+          case "Remove Employee":
+            removeEmployee();
+            break;
+        case "Remove Role":
+          removeRole();
           break;
-        case "Add Role":
-          addRole();
+        case "Remove Department":
+          removeDepartment();
           break;
         case "Exit":
-          connection.end();
+          pool.end();
           break;
         default:
           console.log(`Invalid action: ${answer.action}`);
@@ -65,7 +76,6 @@ const startTracker = () => {
     });
 };
 startTracker();
-
 
 const updateManager = () => {};
 
@@ -393,5 +403,99 @@ query += "JOIN departments ON roles.department_id=departments.department_id ORDE
 
 return connection.query(query);
 }
-////---------------------------------- REMOVE DEPARTMENT -----------------------------\\\\\\\\\\\
 ////---------------------------------- REMOVE ROLE -----------------------------\\\\\\\\\\\
+const removeRole = async () => {
+  const removeTitleObj = await viewRolestoRemove();
+
+  console.table(removeTitleObj);
+
+  const titleChoices = removeTitleObj.map(({ title }) => ({ name: title }));
+
+  const answers = await inquirer.prompt([
+    {
+      type: "rawlist",
+      name: "chosenRole",
+      message: "What role are we removing?",
+      choices: titleChoices,
+    },
+  ]);
+  let id;
+  const roleID = removeTitleObj.filter((name) => {
+    if (name.title === answers.chosenRole) return name.role_id;
+  });
+  let removeRoleID = roleID.map(({ role_id }) => ({ name: role_id }));
+
+  id = removeRoleID[0].name;
+
+  console.log(id);
+
+  connection.query(
+    `DELETE roles, employees FROM employees JOIN roles ON roles.role_id=${id} WHERE roles.role_id=employees.role_id; `,
+    (err) => {
+      if (err) throw err;
+      console.log("Successfully Removed");
+      startTracker();
+    }
+  );
+};
+
+const viewRolestoRemove = async () => {
+  return connection.query(
+    "SELECT role_id, title, salary, name FROM roles JOIN departments ON roles.department_id=departments.department_id"
+  );
+};
+/////---------------------------------- REMOVE DEPARTMENT -----------------------------\\\\\\\\\\\
+const removeDepartment = async () => {
+  const removeDepartObj = await viewDepartmentToRemove();
+
+  console.table(removeDepartObj);
+
+  const departmentChoices = removeDepartObj.map(({ name }) => ({ name: name }));
+
+  const answers = await inquirer.prompt([
+    {
+      type: "rawlist",
+      name: "chosenDepartment",
+      message: "What Department are we removing?",
+      choices: departmentChoices,
+    },
+  ]);
+  let id;
+  const departmentID = removeDepartObj.filter((name) => {
+    if (name.name === answers.chosenDepartment) return name.department_id;
+  });
+  let removeDepartmentID = departmentID.map(({ department_id }) => ({ name: department_id }));
+
+  id = removeDepartmentID[0].name;
+
+  console.log(id);
+
+  connection.query(
+    `DELETE FROM departments WHERE department_id=${id} `,
+    (err) => {
+      if (err) throw err;
+      console.log("Successfully Removed");
+      startTracker();
+    }
+  );
+};
+
+const viewDepartmentToRemove = async () => {
+  return connection.query(
+    "select departments.department_id,departments.name,sum(roles.salary) AS 'Department Budget' FROM departments JOIN roles ON departments.department_id=roles.department_id group by departments.department_id,departments.name;"
+  );
+};
+
+/////---------------------------------- VIEW DEPARTMENTS BUDGET-----------------------------\\\\\\\\\\\
+const viewBudget = () => {
+let query = "select departments.department_id,departments.name,sum(roles.salary) AS 'Department Budget' FROM departments"
+  query +=  " JOIN roles ON departments.department_id=roles.department_id group by departments.department_id,departments.name;"
+  
+  connection.query(query, (err, res) => {
+    if (err) throw ("WHATS GOING ON", err);
+    
+    console.table(res);
+    
+    startTracker();
+  });
+};
