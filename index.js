@@ -24,7 +24,7 @@ const startTracker = () => {
         "Remove Role",
         "Remove Department",
         "Update Employee's Role",
-        "Update Employee Manager",
+        //"Update Employee Manager",
         "Exit",
       ],
     })
@@ -54,9 +54,9 @@ const startTracker = () => {
         case "Update Employee's Role":
           updateRole();
           break;
-        case "Update Employee Manager":
-          //updateManager();
-          break;
+/*         case "Update Employee Manager":
+          //viewBudget();
+          break; */
           case "Remove Employee":
             removeEmployee();
             break;

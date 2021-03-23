@@ -1,14 +1,19 @@
 const mysql = require("mysql");
 const util = require("util");
+require('dotenv').config(); 
 //const allEmployees = require('./lib/view_all');
 
-const connection = mysql.createConnection({
+const connection = mysql.createConnection(
+
+  {
     host: 'localhost',
     port: 3306,
-    user: 'root',
-    password: 'dontknow1',
-    database: 'employee_DB',
-  });
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+
+  }
+);
   
   connection.connect();
 
