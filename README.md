@@ -33,8 +33,8 @@ npm install inquierer and mysql2
 
 ## USAGE
 
-node index.js will run the code and then you will be prompted on what you would like to do
-
+node index.js will run the code and then you will be prompted on what you would like to do. Here's a 
+[Youtube Link](https://youtu.be/kB-88DGYYU0)
 ## LICENSE
 
 ![badge](https://img.shields.io/badge/license-MIT-blue.svg)

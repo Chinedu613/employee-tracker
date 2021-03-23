@@ -103,15 +103,17 @@ const employeesByRoles = async () => {
   console.table(rolesObj);
 
   let dupRolesObj = await rolesObj.map(({ title }) => ({ name: title }));
-
+console.log(dupRolesObj)
   const set = new Set();
 
   let roleChoices = await dupRolesObj.filter((el) => {
-    const roleChoices = set.has(el.title);
-    set.add(el.title);
-    return roleChoices;
+    const roleChoices = set.has(el.name);
+    
+    set.add(el.name);
+    
+    return !roleChoices;
   });
-
+console.log(roleChoices)
   const answers = await inquirer.prompt([
     {
       type: "rawlist",
@@ -143,6 +145,7 @@ const viewDepartment = async () => {
   const depatmentsView = await everyDepartment();
 
   console.table(depatmentsView);
+
   let dupChoices = await depatmentsView.map(({ name }) => ({ name: name }));
 
   const set = new Set();
@@ -185,7 +188,7 @@ const everyDepartment = () => {
 const updateRole = async () => {
   const roles = await letsUpdateRoles();
   console.table(roles);
-  const roleChoices = roles.map(({ title }) => ({ name: title }));
+  const roleChoices = await roles.map(({ title }) => ({ name: title }));
   const nameList = roles.map(({ name }) => ({ name: name }));
 
   const set = new Set();
@@ -311,11 +314,10 @@ const viewallRoles = async () =>
 const addRole = async () => {
   const departments = await viewRolestoADD();
 
-  console.log(departments);
 
   console.table(departments);
   let dupChoices = await departments.map(({ name }) => ({ name: name }));
-
+console.log(dupChoices);
   // Removing Duplicates of Departments with Set method & filter
   const set = new Set();
   // Filter to make new array to without duplicates the duplicates we do not want
@@ -354,8 +356,8 @@ const addRole = async () => {
 };
 
 const viewRolestoADD = () => {
-  connection.query(
-    "SELECT title, salary, name FROM roles JOIN departments ON roles.department_id=departments.department_id"
+  return connection.query(
+    "SELECT * FROM departments"
   );
 };
 
